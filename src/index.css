@@ -1,0 +1,26 @@
+:root {
+  --background-color: #f0f4f8;
+  --container-bg: #ffffff;
+  --text-color: #1e3a5f;
+  --primary-color: #007bff;
+  --primary-hover: #0056b3;
+  --border-color: #ced4da;
+  --error-color: #dc3545;
+}
+
+/* Paleta de cores para o tema escuro */
+[data-theme="dark"] {
+  --background-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --primary-color: #3d9dff;
+  --primary-hover: #6cbaff;
+  --border-color: #444444;
+  --error-color: #dc3545;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s, color 0.3s;
+}
