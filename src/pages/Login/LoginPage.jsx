@@ -1,52 +1,44 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import "./LoginPage.css";
 
 export default function LoginPage() {
+  const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Função chamada ao submeter o formulário
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // --- LÓGICA DE AUTENTICAÇÃO VIRÁ AQUI ---
-    // Simulação de uma chamada à API
     try {
-      console.log("Enviando dados para o backend:", { email, password });
-
-      // Exemplo de como você faria a chamada para sua API Node.js
-      /*
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://meorganiza-api-staging.up.railway.app/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Falha na autenticação');
+        throw new Error(data.message || "Falha na autenticação");
       }
 
-      // Se o login for bem-sucedido:
-      // 1. Salvar o token (ex: localStorage.setItem('token', data.token));
-      // 2. Redirecionar o usuário para o dashboard.
-      console.log('Login bem-sucedido:', data);
-      */
-
-      // Simulação de sucesso após 2 segundos
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Login realizado com sucesso! (Simulação)");
+      // Chamo a função login do contexto
+      // Ela vai salvar o token, atualizar o estado e navegar para o dashboard.
+      login(data.token);
     } catch (err) {
-      setError(err.message);
-      // Exibe a mensagem de erro vinda da API ou uma mensagem padrão
-      alert("Erro no login! (Simulação)");
+      setError(err.message || "Email ou senha inválidos.");
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +49,6 @@ export default function LoginPage() {
       <div className="login-container">
         <h2>Bem-vindo ao MeOrganiza</h2>
         <p>Acesse sua conta para continuar</p>
-
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
@@ -89,11 +80,10 @@ export default function LoginPage() {
             {isLoading ? "Entrando..." : "Entrar"}
           </button>
         </form>
-
         <div className="login-links">
-          <a href="/forgot-password">Esqueceu a senha?</a>
+          <Link to="/forgot-password">Esqueceu a senha?</Link>
           <span>|</span>
-          <a href="/register">Não tem uma conta? Cadastre-se</a>
+          <Link to="/register">Não tem uma conta? Cadastre-se</Link>
         </div>
       </div>
     </div>
