@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../constants/api";
 import "./RegisterPage.css";
 
 export default function RegisterPage() {
@@ -34,16 +35,13 @@ export default function RegisterPage() {
 
     try {
       // 2. Envio para a API
-      const response = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/user",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, email, password }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/user`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
 
       const data = await response.json();
 

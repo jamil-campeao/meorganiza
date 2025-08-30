@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../constants/api";
 import "./LoginPage.css";
 
 export default function LoginPage() {
@@ -12,21 +13,19 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event) => {
+    console.log("passei aqui");
     event.preventDefault();
     setIsLoading(true);
     setError("");
 
     try {
-      const response = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       const data = await response.json();
 
