@@ -11,6 +11,7 @@ import "./DashboardPage.css";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { useAuth } from "../../context/AuthContext";
+import { API_BASE_URL } from "../../constants/api";
 
 export default function DashboardPage() {
   const { token, logout } = useAuth();
@@ -38,14 +39,11 @@ export default function DashboardPage() {
     setError(null);
 
     try {
-      const transactionsResponse = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/transaction",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const transactionsResponse = await fetch(`${API_BASE_URL}/transaction`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (transactionsResponse.status === 401) {
         logout();
@@ -69,14 +67,11 @@ export default function DashboardPage() {
 
       const currentBalance = totalIncome - totalExpenses;
 
-      const forecastResponse = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/balanceforecasts",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const forecastResponse = await fetch(`${API_BASE_URL}/balanceforecasts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (forecastResponse.status === 401) {
         logout();

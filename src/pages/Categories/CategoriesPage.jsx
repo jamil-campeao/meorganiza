@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import EditCategoryModal from "../../components/EditCategoryModal/EditCategoryModal";
+import { API_BASE_URL } from "../../constants/api";
 import "./CategoriesPage.css";
 
 export default function CategoriesPage() {
@@ -21,14 +22,11 @@ export default function CategoriesPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/categories",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/categories`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 401) {
         logout();
@@ -65,7 +63,7 @@ export default function CategoriesPage() {
 
     try {
       const response = await fetch(
-        "https://meorganiza-api-staging.up.railway.app/categories", // URL ajustada para o plural
+        `${API_BASE_URL}/categories`, // URL ajustada para o plural
         {
           method: "POST",
           headers: {
@@ -106,15 +104,12 @@ export default function CategoriesPage() {
     }
 
     try {
-      const response = await fetch(
-        `https://meorganiza-api-staging.up.railway.app/categories/${categoryId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_BASE_URL}/categories/${categoryId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 401) {
         logout();
@@ -135,7 +130,7 @@ export default function CategoriesPage() {
   const handleUpdateCategory = async (updatedCategory) => {
     try {
       const response = await fetch(
-        `https://meorganiza-api-staging.up.railway.app/categories/${updatedCategory.id}`,
+        `${API_BASE_URL}/categories/${updatedCategory.id}`,
         {
           method: "PUT",
           headers: {
