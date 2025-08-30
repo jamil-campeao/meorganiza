@@ -30,8 +30,11 @@
 
 .sidebar-menu {
   list-style: none;
-  padding: 20px 0;
+  padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .sidebar-link {
@@ -42,13 +45,34 @@
   color: var(--text-color);
   text-decoration: none;
   font-size: 16px;
-  width: 100%;
+  width: 83%;
   background: none;
   border: none;
   cursor: pointer;
   text-align: left;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .sidebar-link:hover {
   background-color: var(--background-color);
+  color: var(--primary-color);
+}
+
+/* Estilo para o link que está ativo (página atual) */
+.sidebar-link.active {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+}
+
+/* Garante que o ícone e o texto do link ativo tenham a mesma cor */
+.sidebar-link.active svg {
+  color: white;
+}
+
+/* Estilo para o botão de logout */
+.sidebar-logout {
+  margin-top: auto; /* Empurra o botão de sair para o final do menu */
+  padding: 20px 0;
+  border-top: 1px solid var(--border-color);
 }

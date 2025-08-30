@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event) => {
+    console.log("passei aqui");
     event.preventDefault();
     setIsLoading(true);
     setError("");

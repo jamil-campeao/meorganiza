@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   FiTrendingUp,
   FiTrendingDown,
@@ -10,23 +10,20 @@ import SummaryCard from "../../components/SummaryCard/SummaryCard";
 import "./DashboardPage.css";
 import Navbar from "../../components/Navbar/Navbar";
 import Sidebar from "../../components/Sidebar/Sidebar";
+import { useAuth } from "../../context/AuthContext";
 
 export default function DashboardPage() {
+  const { token, logout } = useAuth();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  // Dados de exemplo (virão da sua API no futuro)
-  const [summaryData] = useState({
-    balance: 15230.5,
-    income: 7500.0,
-    expenses: 2269.5,
-    forecast: 20461.0,
+  const [summaryData, setSummaryData] = useState({
+    balance: 0,
+    income: 0,
+    expenses: 0,
+    forecast: 0,
   });
-
-  const [recentTransactions] = useState([
-    { id: 1, type: "despesa", description: "Aluguel", value: 1500.0 },
-    { id: 2, type: "receita", description: "Salário", value: 7500.0 },
-    { id: 3, type: "despesa", description: "Supermercado", value: 450.7 },
-    { id: 4, type: "despesa", description: "Conta de Internet", value: 99.9 },
-  ]);
+  const [recentTransactions, setRecentTransactions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Função para formatar valores como moeda (Real Brasileiro)
   const formatCurrency = (value) => {
@@ -36,16 +33,102 @@ export default function DashboardPage() {
     });
   };
 
+  const fetchDashboardData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const transactionsResponse = await fetch(
+        "https://meorganiza-api-staging.up.railway.app/transaction",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (transactionsResponse.status === 401) {
+        logout();
+        return;
+      }
+
+      if (!transactionsResponse.ok) {
+        throw new Error("Erro ao obter transações");
+      }
+
+      const transactions = await transactionsResponse.json();
+      setRecentTransactions(transactions.slice(0, 4));
+
+      const totalIncome = transactions
+        .filter((t) => t.type === "RECEITA")
+        .reduce((sum, t) => sum + parseFloat(t.value), 0);
+
+      const totalExpenses = transactions
+        .filter((t) => t.type === "DESPESA")
+        .reduce((sum, t) => sum + parseFloat(t.value), 0);
+
+      const currentBalance = totalIncome - totalExpenses;
+
+      const forecastResponse = await fetch(
+        "https://meorganiza-api-staging.up.railway.app/balanceforecasts",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (forecastResponse.status === 401) {
+        logout();
+        return;
+      }
+
+      let forecast = 0;
+
+      if (forecastResponse.ok) {
+        forecast = await forecastResponse.json();
+      }
+
+      if (forecast.length > 0) {
+        forecast = parseFloat(forecast[0].futureBalance);
+      }
+
+      setSummaryData({
+        balance: currentBalance,
+        income: totalIncome,
+        expenses: totalExpenses,
+        forecast: forecast,
+      });
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //Efeito que busca os dados quando a página é carregada
+  useEffect(() => {
+    if (token) {
+      fetchDashboardData();
+    }
+  }, [token]);
+
+  if (isLoading) {
+    return <div>Carregando dados...</div>;
+  }
+
+  if (error) {
+    return <div>Erro ao carregar dados: {error}</div>;
+  }
+
   return (
     <div className="dashboard-layout">
-      {/* 4. Adicione o Sidebar e o Overlay */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
       {isSidebarOpen && (
         <div className="overlay" onClick={() => setSidebarOpen(false)}></div>
       )}
 
       <div className="main-content">
-        {/* 5. Adicione a Navbar e passe a função para abrir o menu */}
         <Navbar onMenuClick={() => setSidebarOpen(true)} />
 
         <div className="dashboard-page-content">
@@ -87,17 +170,21 @@ export default function DashboardPage() {
             <div className="dashboard-list content-box">
               <h3>Últimas Transações</h3>
               <ul>
-                {recentTransactions.map((t) => (
-                  <li key={t.id} className="transaction-item">
-                    <span>{t.description}</span>
-                    <span
-                      className={t.type === "receita" ? "income" : "expense"}
-                    >
-                      {t.type === "receita" ? "+" : "-"}{" "}
-                      {formatCurrency(t.value)}
-                    </span>
-                  </li>
-                ))}
+                {recentTransactions.length > 0 ? (
+                  recentTransactions.map((t) => (
+                    <li key={t.id} className="transaction-item">
+                      <span>{t.description}</span>
+                      <span
+                        className={t.type === "RECEITA" ? "income" : "expense"}
+                      >
+                        {t.type === "RECEITA" ? "+" : "-"}{" "}
+                        {formatCurrency(parseFloat(t.value))}
+                      </span>
+                    </li>
+                  ))
+                ) : (
+                  <li>Nenhuma transação encontrada.</li>
+                )}
               </ul>
             </div>
           </div>

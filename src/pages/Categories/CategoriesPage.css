@@ -1,0 +1,76 @@
+.categories-layout {
+  display: flex;
+}
+
+.categories-page-content {
+  padding: 30px;
+  max-width: 1200px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.categories-page-content h2 {
+  margin-bottom: 20px;
+}
+
+.categories-form form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.categories-form input,
+.categories-form select {
+  flex-grow: 1;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+}
+
+.categories-form button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.categories-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.category-item:last-child {
+  border-bottom: none;
+}
+
+.category-actions button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.category-actions .delete-button {
+  color: var(--error-color);
+}
+
+.category-actions button:hover {
+  opacity: 1;
+}
